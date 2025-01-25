@@ -1,0 +1,49 @@
+.create-account-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+  }
+  
+  mat-card {
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-card-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1877f2;
+  }
+  
+  mat-card-subtitle {
+    font-size: 14px;
+    color: #606770;
+  }
+  
+  .name-fields {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .name-field {
+    flex: 1;
+  }
+  
+  .gender-fields {
+    margin-top: 20px;
+  }
+  
+  mat-radio-group {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+  }
+  
+  button {
+    width: 100%;
+  }
+  

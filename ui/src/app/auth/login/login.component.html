@@ -1,0 +1,36 @@
+<div class="login-container">
+    <div class="login-card">
+      <div class="brand-logo">Roomie Find</div>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" />
+          <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            Please enter a valid email.
+          </mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password" required />
+          <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Password is required.
+          </mat-error>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" class="full-width" [disabled]="loginForm.invalid">
+          Log In
+        </button>
+      </form>
+  
+      <div class="forgot-password">
+        <a href="#">Forgotten password?</a>
+      </div>
+  
+      <div class="divider"></div>
+  
+      <button mat-stroked-button color="accent" class="create-account" (click)="createAccount()">
+        Create New Account
+      </button>
+    </div>
+  </div>
