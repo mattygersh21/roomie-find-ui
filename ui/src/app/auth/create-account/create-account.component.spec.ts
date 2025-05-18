@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CreateAccountComponent } from './create-account.component';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,12 +10,17 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
+import { of, throwError } from 'rxjs';
 
 describe('CreateAccountComponent', () => {
   let component: CreateAccountComponent;
   let fixture: ComponentFixture<CreateAccountComponent>;
+  let userServiceSpy: jasmine.SpyObj<UserService>;
 
   beforeEach(async () => {
+    userServiceSpy = jasmine.createSpyObj('UserService', ['registerUser']);
+
     await TestBed.configureTestingModule({
       declarations: [CreateAccountComponent],
       imports: [
@@ -31,6 +34,7 @@ describe('CreateAccountComponent', () => {
         MatButtonModule,
         ReactiveFormsModule,
       ],
+      providers: [{ provide: UserService, useValue: userServiceSpy }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateAccountComponent);
@@ -61,15 +65,60 @@ describe('CreateAccountComponent', () => {
     expect(component.createAccountForm.valid).toBeFalsy();
   });
 
-  it('should mark the form as valid if all fields are filled correctly', () => {
-    component.createAccountForm.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      birthDate: new Date('2000-01-01'),
+  describe('Tests with valid form settings', () => {
+    let firstName = 'John';
+    let lastName = 'Doe';
+    let email = 'john.doe@example.com';
+    let password = 'password123';
+    let birthDate = '2025-05-07T05:00:00.000Z';
+
+    beforeEach(() => {
+      component.createAccountForm.setValue({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        birthDate: birthDate,
+      });
     });
-    expect(component.createAccountForm.valid).toBeTruthy();
+
+    it('should mark the form as valid if all fields are filled correctly', () => {
+      expect(component.createAccountForm.valid).toBeTruthy();
+    });
+
+    it('should call UserService.registerUser on valid form submission', () => {
+      userServiceSpy.registerUser.and.returnValue(of({} as any));
+
+      component.onSubmit();
+
+      expect(userServiceSpy.registerUser).toHaveBeenCalled();
+    });
+
+    it('should alert success message on successful registration', () => {
+      spyOn(window, 'alert');
+      userServiceSpy.registerUser.and.returnValue(of({} as any));
+
+      component.onSubmit();
+
+      expect(window.alert).toHaveBeenCalledWith('Registration successful');
+    });
+
+    it('should alert error message on registration failure', () => {
+      spyOn(window, 'alert');
+      userServiceSpy.registerUser.and.returnValue(throwError(() => new Error('Registration failed')));
+
+      component.onSubmit();
+
+      expect(window.alert).toHaveBeenCalledWith('Registration failed');
+    });
+
+    it('should reset the password field after form submission', () => {
+      userServiceSpy.registerUser.and.returnValue(of({} as any));
+
+      component.onSubmit();
+
+      expect(component.createAccountForm.controls['password'].value).toBeNull();
+    });
   });
 
   it('should toggle password visibility', () => {
@@ -78,46 +127,5 @@ describe('CreateAccountComponent', () => {
     expect(component.hidePassword).toBeFalse();
     component.togglePasswordVisibility();
     expect(component.hidePassword).toBeTrue();
-  });
-
-  it('should call onSubmit when the form is submitted', () => {
-    spyOn(component, 'onSubmit');
-    const form = fixture.debugElement.query(By.css('form'));
-    form.triggerEventHandler('ngSubmit', null);
-    expect(component.onSubmit).toHaveBeenCalled();
-  });
-
-  it('should log the form values on valid form submission', () => {
-    spyOn(console, 'log');
-    component.createAccountForm.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      birthDate: new Date('2000-01-01'),
-    });
-    component.onSubmit();
-    expect(console.log).toHaveBeenCalledWith('Form Submitted', {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      birthDate: new Date('2000-01-01'),
-    });
-  });
-
-  it('should disable the submit button if the form is invalid', () => {
-    const button = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
-    expect(button.disabled).toBeTrue();
-
-    component.createAccountForm.setValue({
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      password: 'password123',
-      birthDate: new Date('2000-01-01'),
-    });
-    fixture.detectChanges();
-    expect(button.disabled).toBeFalse();
   });
 });

@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../services/user.service';
 
 
 @NgModule({
@@ -34,6 +35,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatNativeDateModule,
     MatRadioModule,
     ReactiveFormsModule
+  ],
+  providers: [
+    UserService
   ]
 })
 export class AuthModule { }
