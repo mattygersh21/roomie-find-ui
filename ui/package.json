@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "serve-fire": "n serve & wait-on http://localhost:4200 && firefox --new-window http://localhost:4200",
+    "serve-chrome": "ng serve & wait-on http://localhost:4200 && google-chrome --new-window --auto-open-devtools-for-tabs --user-data-dir=/tmp/chrome-devtools-profile http://localhost:4200",
+    "serve-all": "npm run serve-fire & npm run serve-chrome"
   },
   "private": true,
   "dependencies": {
@@ -35,6 +38,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.5.2"
+    "typescript": "~5.5.2",
+    "wait-on": "^8.0.3"
   }
 }
