@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -22,7 +24,17 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log('Login form data:', this.loginForm.value);
+      this.userService.login(this.loginForm.value).subscribe(
+        (response: any) => {
+          localStorage.setItem('jwt', response.token);
+          // this.router.navigate(['/dashboard']);
+        },
+        error => {
+          alert(`${error.message}\n\nError:\n${error.status}\n${error.statusText}\n`);
+          // TODO: Add proper logging
+          // console.error('Login failed:', error);
+        }
+      );
     }
   }
 
